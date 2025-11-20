@@ -5,7 +5,8 @@ from fastapi.responses import FileResponse
 
 from app.db.database import engine, Base, SessionLocal
 from app.crud.caravan import create_initial_caravans
-from app.routers import caravans
+from app.routers import caravans, users, cart as cart_router, host
+from app.models import caravan, user, cart # Import models
 
 app = FastAPI()
 
@@ -41,3 +42,6 @@ async def read_root():
 
 # Include your routers here
 app.include_router(caravans.router, prefix="/api/v1")
+app.include_router(users.router, prefix="/api/v1/users")
+app.include_router(cart_router.router, prefix="/api/v1/cart")
+app.include_router(host.router, prefix="/api/v1/host")

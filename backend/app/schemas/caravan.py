@@ -1,7 +1,9 @@
 from pydantic import BaseModel
+from typing import Union
 
 class CaravanBase(BaseModel):
     name: str
+    description: Union[str, None] = None
     location: str
     price: float
     image: str
@@ -11,6 +13,7 @@ class CaravanCreate(CaravanBase):
 
 class Caravan(CaravanBase):
     id: int
+    host_id: Union[int, None] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
