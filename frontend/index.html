@@ -11,14 +11,13 @@
         <h1><a href="#" id="home-link">CaravanShare</a></h1>
         <nav>
             <div id="auth-section">
-                <button id="cart-btn">장바구니</button>
-                <button id="login-btn">로그인</button>
-                <button id="register-btn">회원가입</button>
+                <button id="cart-btn" class="nav-button">장바구니</button>
+                <button id="login-btn" class="nav-button">로그인</button>
+                <button id="register-btn" class="nav-button">회원가입</button>
             </div>
             <div id="user-section" style="display: none;">
                 <span id="user-name"></span>
-                <div id="role-specific-links"></div>
-                <button id="logout-btn">로그아웃</button>
+                <button id="logout-btn" class="nav-button">로그아웃</button>
             </div>
         </nav>
     </header>
@@ -76,7 +75,10 @@
             <h2>장바구니</h2>
             <div id="cart-items">
                 <!-- Cart items will be displayed here -->
-                <p>장바구니가 비어있습니다.</p>
+            </div>
+            <div id="cart-summary">
+                <p>총 금액: <span id="total-price">₩0</span></p>
+                <button id="purchase-btn">전체 구매</button>
             </div>
         </section>
     </template>

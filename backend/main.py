@@ -12,6 +12,7 @@ app = FastAPI()
 
 # Serve frontend files
 app.mount("/frontend", StaticFiles(directory="../frontend"), name="frontend")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # CORS (Cross-Origin Resource Sharing)
 origins = [

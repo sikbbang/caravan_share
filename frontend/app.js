@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const userSection = document.getElementById('user-section');
     const logoutBtn = document.getElementById('logout-btn');
     const userNameSpan = document.getElementById('user-name');
-    const roleSpecificLinks = document.getElementById('role-specific-links');
     const modalOverlay = document.getElementById('modal-overlay');
     const modalContent = document.getElementById('modal-content');
+
+    let currentUserRole = null;
 
     const routes = {
         '/': 'home-page',
@@ -32,32 +33,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkAuth() {
         const token = localStorage.getItem('accessToken');
-        roleSpecificLinks.innerHTML = ''; // Clear old links
+        
+        const existingLink = userSection.querySelector('.dynamic-nav-link');
+        if (existingLink) {
+            existingLink.remove();
+        }
+
         if (token) {
             const payload = parseJwt(token);
             if (payload && payload.name) {
+                currentUserRole = payload.role; // Set user role
                 authSection.style.display = 'none';
                 userSection.style.display = 'flex';
                 userNameSpan.textContent = `${payload.name}님, 환영합니다!`;
                 
+                const newButton = document.createElement('button');
+                newButton.className = 'nav-button dynamic-nav-link';
+
                 if (payload.role === 'guest') {
-                    roleSpecificLinks.innerHTML = '<a href="#/cart">내 장바구니</a>';
+                    newButton.textContent = '장바구니';
+                    newButton.dataset.path = '#/cart';
                 } else if (payload.role === 'host') {
-                    roleSpecificLinks.innerHTML = '<a href="#/seller">판매자 페이지</a>';
+                    newButton.textContent = '판매자 페이지';
+                    newButton.dataset.path = '#/seller';
                 }
+                userSection.insertBefore(newButton, logoutBtn);
 
             } else {
+                currentUserRole = null; // Clear user role
                 localStorage.removeItem('accessToken');
                 authSection.style.display = 'flex';
                 userSection.style.display = 'none';
             }
         } else {
+            currentUserRole = null; // Clear user role
             authSection.style.display = 'flex';
             userSection.style.display = 'none';
         }
     }
 
-    async function showCaravanDetailModal(caravanId) {
+    async function showCaravanDetailModal(caravanId, showAddToCartButton = true) {
         modalContent.innerHTML = '<p>Loading...</p>';
         modalOverlay.classList.remove('hidden');
         try {
@@ -66,6 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const caravan = await response.json();
 
+            const addToCartBtnHtml = showAddToCartButton && currentUserRole === 'guest'
+                ? `<button id="add-to-cart-btn" data-id="${caravan.id}">장바구니에 담기</button>`
+                : '';
+
             modalContent.innerHTML = `
                 <button class="modal-close-btn">&times;</button>
                 <img src="${caravan.image}" alt="${caravan.name}">
@@ -73,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>${caravan.description || '상세 설명이 없습니다.'}</p>
                 <p><strong>위치:</strong> ${caravan.location}</p>
                 <p><strong>가격:</strong> ₩${caravan.price.toLocaleString()} / 박</p>
-                <button id="add-to-cart-btn" data-id="${caravan.id}">장바구니에 담기</button>
+                ${addToCartBtnHtml}
             `;
         } catch (error) {
             console.error('Error showing modal:', error);
@@ -105,7 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="caravan-item-info">
                         <h3>${caravan.name}</h3>
                         <p>${caravan.location}</p>
-                        <p>₩${caravan.price.toLocaleString()} / 박</p>
+                        <div class="caravan-price-container">
+                            <p>${caravan.price.toLocaleString()}원</p>
+                        </div>
                     </div>
                 `;
                 caravanListContainer.appendChild(caravanItem);
@@ -139,29 +160,54 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const items = await response.json();
+            const cartSummary = document.getElementById('cart-summary');
+
             if (items.length === 0) {
                 cartItemsContainer.innerHTML = '<p>장바구니가 비어있습니다.</p>';
+                if(cartSummary) cartSummary.style.display = 'none';
                 return;
             }
+            
+            if(cartSummary) cartSummary.style.display = 'block';
 
             cartItemsContainer.innerHTML = items.map(item => `
-                <div class="cart-item" data-id="${item.id}">
-                    <span>${item.caravan.name}</span>
-                    <span>₩${item.caravan.price.toLocaleString()}</span>
+                <div class="cart-item" data-id="${item.id}" data-price="${item.caravan.price}" data-caravan-id="${item.caravan.id}">
+                    <input type="checkbox" class="cart-item-checkbox" checked>
+                    <img src="${item.caravan.image}" alt="${item.caravan.name}" class="cart-item-image">
+                    <div class="cart-item-details">
+                        <h4>${item.caravan.name}</h4>
+                        <p>${item.caravan.description || '설명이 없습니다.'}</p>
+                    </div>
+                    <span class="cart-item-price">₩${item.caravan.price.toLocaleString()}</span>
                     <button class="remove-from-cart-btn">삭제</button>
                 </div>
             `).join('');
+            
+            updateTotalPrice();
+
         } catch (error) {
             console.error('Error rendering cart:', error);
             cartItemsContainer.innerHTML = '<p>장바구니를 불러오는 데 실패했습니다.</p>';
         }
     }
 
+    function updateTotalPrice() {
+        const totalPriceEl = document.getElementById('total-price');
+        if (!totalPriceEl) return;
+
+        let total = 0;
+        document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+            const itemDiv = checkbox.closest('.cart-item');
+            total += parseFloat(itemDiv.dataset.price);
+        });
+
+        totalPriceEl.textContent = `₩${total.toLocaleString()}`;
+    }
+
     async function renderSellerPage() {
         const sellerContent = document.getElementById('seller-content');
         if (!sellerContent) return;
-        sellerContent.innerHTML = '<p>Loading seller data...</p>';
-
+        
         const token = localStorage.getItem('accessToken');
         if (!token) {
             alert('로그인이 필요합니다.');
@@ -169,67 +215,149 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const koreanAdministrativeDivisions = {
+            "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+            "부산광역시": ["강서구", "금정구", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구", "기장군"],
+            "경기도": ["수원시", "성남시", "고양시", "용인시", "부천시", "안산시", "안양시", "남양주시", "화성시", "평택시"],
+            "강원도": ["춘천시", "원주시", "강릉시", "동해시", "태백시", "속초시", "삼척시"],
+            "충청북도": ["청주시", "충주시", "제천시"],
+            "충청남도": ["천안시", "공주시", "보령시", "아산시", "서산시", "논산시", "계룡시", "당진시"],
+            "전라북도": ["전주시", "익산시", "군산시", "정읍시", "남원시", "김제시"],
+            "전라남도": ["목포시", "여수시", "순천시", "나주시", "광양시"],
+            "경상북도": ["포항시", "경주시", "김천시", "안동시", "구미시", "영주시", "영천시", "상주시", "문경시", "경산시"],
+            "경상남도": ["창원시", "진주시", "통영시", "사천시", "김해시", "밀양시", "거제시", "양산시"],
+            "제주특별자치도": ["제주시", "서귀포시"]
+        };
+
+        const provinceOptions = Object.keys(koreanAdministrativeDivisions).map(region => `<option value="${region}">${region}</option>`).join('');
+
         sellerContent.innerHTML = `
             <h3>내 카라반 목록</h3>
             <div id="host-caravan-list"></div>
             <hr>
-            <h3>새 카라반 등록</h3>
-            <form id="add-caravan-form">
-                <input type="text" name="name" placeholder="카라반 이름" required>
-                <input type="text" name="location" placeholder="위치" required>
-                <input type="number" name="price" placeholder="가격" required>
-                <input type="text" name="image" placeholder="이미지 URL" required>
-                <textarea name="description" placeholder="상세설명"></textarea>
-                <button type="submit">등록하기</button>
-            </form>
+            <button id="show-add-form-btn" class="nav-button">새 카라반 등록</button>
+            <div id="add-caravan-container" style="display: none; margin-top: 1.5rem;">
+                <h3>새 카라반 등록</h3>
+                <form id="add-caravan-form">
+                    <input type="text" name="name" placeholder="카라반 이름" required>
+                    <textarea name="description" placeholder="상세설명"></textarea>
+                    <input type="file" name="image" accept="image/*" required>
+                    <div style="display: flex; gap: 1rem;">
+                        <select id="location-province" required style="flex: 1;">
+                            <option value="" disabled selected>도/광역시 선택</option>
+                            ${provinceOptions}
+                        </select>
+                        <select id="location-city" required style="flex: 1;" disabled>
+                            <option value="" disabled selected>시/군/구 선택</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="location">
+                    <div class="input-with-unit">
+                        <input style="font-size: 1rem;height: 40px;" type="number" name="price" placeholder="가격" required>
+                        <span>원</span>
+                    </div>
+                    <button type="submit">등록하기</button>
+                </form>
+            </div>
         `;
 
         const hostCaravanList = document.getElementById('host-caravan-list');
-        const addCaravanForm = document.getElementById('add-caravan-form');
-
+        const addCaravanContainer = document.getElementById('add-caravan-container');
+        
         async function fetchAndRenderHostCaravans() {
             hostCaravanList.innerHTML = '<p>Loading caravans...</p>';
             try {
-                const response = await fetch('/api/v1/host/caravans', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) {
-                    const errorBody = await response.text();
-                    console.error('Error fetching host caravans:', response.status, errorBody);
-                    throw new Error('Failed to fetch host caravans.');
-                }
+                const response = await fetch('/api/v1/host/caravans', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!response.ok) throw new Error('Failed to fetch host caravans.');
                 const caravans = await response.json();
-                hostCaravanList.innerHTML = caravans.map(c => `<div>${c.name} - ${c.location}</div>`).join('');
+                if (caravans.length === 0) {
+                    hostCaravanList.innerHTML = "<p>등록된 카라반이 없습니다.</p>";
+                    return;
+                }
+                hostCaravanList.innerHTML = caravans.map(caravan => `
+                    <div class="cart-item" data-id="${caravan.id}">
+                        <img src="${caravan.image}" alt="${caravan.name}" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h4>${caravan.name}</h4>
+                            <p>${caravan.description || '설명이 없습니다.'}</p>
+                        </div>
+                        <span class="cart-item-price">₩${caravan.price.toLocaleString()}</span>
+                        <button class="remove-hosted-caravan-btn" data-id="${caravan.id}">등록 취소</button>
+                    </div>
+                `).join('');
             } catch (error) {
                 console.error('Error fetching host caravans:', error);
                 hostCaravanList.innerHTML = '<p>카라반 목록을 불러오지 못했습니다.</p>';
             }
         }
 
-        addCaravanForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const caravanData = Object.fromEntries(formData.entries());
-            caravanData.price = parseInt(caravanData.price, 10);
+        addCaravanContainer.addEventListener('change', (e) => {
+            const provinceSelect = document.getElementById('location-province');
+            const citySelect = document.getElementById('location-city');
+            const hiddenLocationInput = document.querySelector('input[name="location"]');
 
-            try {
-                const response = await fetch('/api/v1/host/caravans', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(caravanData)
+            if (e.target === provinceSelect) {
+                const selectedProvince = provinceSelect.value;
+                const cities = koreanAdministrativeDivisions[selectedProvince] || [];
+                
+                citySelect.innerHTML = '<option value="" disabled selected>시/군/구 선택</option>';
+                cities.forEach(city => {
+                    citySelect.innerHTML += `<option value="${city}">${city}</option>`;
                 });
-                if (!response.ok) {
-                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to add caravan.');
+                citySelect.disabled = false;
+            }
+
+            if (provinceSelect.value && citySelect.value) {
+                hiddenLocationInput.value = `${provinceSelect.value} ${citySelect.value}`;
+            } else {
+                hiddenLocationInput.value = '';
+            }
+        });
+
+        sellerContent.addEventListener('submit', async (e) => {
+            if (e.target.matches('#add-caravan-form')) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                if (!formData.get('location')) {
+                    alert('위치를 모두 선택해주세요.');
+                    return;
                 }
-                e.target.reset();
-                fetchAndRenderHostCaravans();
-            } catch (error) {
-                console.error('Error adding caravan:', error);
-                alert(`카라반 등록 실패: ${error.message}`);
+                try {
+                    const response = await fetch('/api/v1/host/caravans', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to add caravan.');
+                    }
+                    e.target.reset();
+                    document.getElementById('add-caravan-container').style.display = 'none';
+                    fetchAndRenderHostCaravans();
+                } catch (error) {
+                    console.error('Error adding caravan:', error);
+                    alert(`카라반 등록 실패: ${error.message}`);
+                }
+            }
+        });
+
+        sellerContent.addEventListener('click', async (e) => {
+            if (e.target.matches('.remove-hosted-caravan-btn')) {
+                const caravanId = e.target.dataset.id;
+                if (confirm('정말로 이 카라반을 삭제하시겠습니까?')) {
+                    try {
+                        const response = await fetch(`/api/v1/host/caravans/${caravanId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (!response.ok) throw new Error('Failed to delete caravan.');
+                        fetchAndRenderHostCaravans();
+                    } catch (error) {
+                        console.error('Delete caravan error:', error);
+                        alert(error.message);
+                    }
+                }
             }
         });
 
@@ -316,6 +444,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    document.body.addEventListener('change', (e) => {
+        if (e.target.matches('.cart-item-checkbox')) {
+            updateTotalPrice();
+        }
+    });
+
     document.body.addEventListener('click', async (e) => {
         if (e.target.matches('#home-link')) { e.preventDefault(); window.location.hash = '#/'; }
         if (e.target.matches('#login-btn')) { e.preventDefault(); window.location.hash = '#/login'; }
@@ -329,6 +463,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.hash = '#/login';
             } else {
                 window.location.hash = '#/cart';
+            }
+        }
+
+        if (e.target.matches('.dynamic-nav-link')) {
+            const path = e.target.dataset.path;
+            if (path) {
+                window.location.hash = path;
             }
         }
 
@@ -347,6 +488,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const caravanId = caravanItem.dataset.id;
             if (caravanId) {
                 showCaravanDetailModal(caravanId);
+            }
+        }
+
+        const cartItem = e.target.closest('.cart-item');
+        if (cartItem && !e.target.matches('.remove-from-cart-btn, .cart-item-checkbox')) {
+            const caravanId = cartItem.dataset.caravanId;
+            if (caravanId) {
+                showCaravanDetailModal(caravanId, false);
             }
         }
 
@@ -377,19 +526,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (e.target.matches('.remove-from-cart-btn')) {
-            const cartItemDiv = e.target.closest('.cart-item');
-            const itemId = cartItemDiv.dataset.id;
-            const token = localStorage.getItem('accessToken');
-            try {
-                const response = await fetch(`/api/v1/cart/${itemId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) throw new Error('Failed to remove item.');
-                renderCartPage(); // Refresh cart
-            } catch (error) {
-                console.error('Remove from cart error:', error);
-                alert(error.message);
+            if (confirm('정말로 삭제하시겠습니까?')) {
+                const cartItemDiv = e.target.closest('.cart-item');
+                const itemId = cartItemDiv.dataset.id;
+                const token = localStorage.getItem('accessToken');
+                try {
+                    const response = await fetch(`/api/v1/cart/${itemId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (!response.ok) throw new Error('Failed to remove item.');
+                    renderCartPage(); // Refresh cart
+                } catch (error) {
+                    console.error('Remove from cart error:', error);
+                    alert(error.message);
+                }
+            }
+        }
+
+        if (e.target.matches('#purchase-btn')) {
+            const checkedItems = document.querySelectorAll('.cart-item-checkbox:checked');
+            if (checkedItems.length === 0) {
+                alert('구매할 상품을 선택해주세요.');
+                return;
+            }
+            // In a real application, you would proceed to a payment gateway
+            alert(`${checkedItems.length}개의 상품을 구매합니다.`);
+        }
+
+        if (e.target.matches('#show-add-form-btn')) {
+            const formContainer = document.getElementById('add-caravan-container');
+            if (formContainer) {
+                const isVisible = formContainer.style.display === 'block';
+                formContainer.style.display = isVisible ? 'none' : 'block';
             }
         }
     });

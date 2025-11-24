@@ -38,12 +38,14 @@ async def create_caravan(db: AsyncSession, caravan: CaravanCreate, host_id: int)
     return db_caravan
 
 async def create_initial_caravans(db: AsyncSession):
-    initial_caravans = [
-        CaravanCreate(name="Airstream Bambi", description="A compact and stylish travel trailer.", price=80.0, location="Seoul", image="https://images.unsplash.com/photo-1712765124506-67e68c30e90f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjN8fCVFQyVCOSVCNCVFQiU5RCVCQyVFQiVCMCU5OHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=900"),
-        CaravanCreate(name="Winnebago Micro Minnie", description="A lightweight and versatile caravan.", price=70.0, location="Busan", image="https://images.unsplash.com/photo-1548513830-5e684f0d4d82?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2832"),
-        CaravanCreate(name="Jayco Jay Flight", description="A family-friendly and spacious caravan.", price=90.0, location="Jeju", image="https://www.jayco.com/static/uploads/2022/08/2023-Jay-Flight-Bungalow-EXT-1-1.jpg"),
-    ]
-    for caravan in initial_caravans:
-        await get_or_create_caravan(db, caravan)
+    pass
 
+async def delete_caravan(db: AsyncSession, caravan_id: int, host_id: int):
+    result = await db.execute(select(Caravan).filter(Caravan.id == caravan_id))
+    db_caravan = result.scalars().first()
+    if db_caravan and db_caravan.host_id == host_id:
+        await db.delete(db_caravan)
+        await db.commit()
+        return db_caravan
+    return None
 
