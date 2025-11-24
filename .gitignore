@@ -4,3 +4,9 @@ backend/.env
 
 # Static files (user uploads)
 backend/static/
+
+# Python bytecode
+__pycache__/
+
+# Database files
+*.db

@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
 
+    # Admin User for Seeding
+    ADMIN_EMAIL: str = "admin@example.com"
+    ADMIN_PASSWORD: str = "adminpassword"
+    ADMIN_NAME: str = "Admin User"
+
     class Config:
         env_file = ".env"
 
