@@ -2,13 +2,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from starlette.middleware.sessions import SessionMiddleware
 
 from app.db.database import engine, Base, SessionLocal
 from app.crud.caravan import create_initial_caravans
 from app.routers import caravans, users, cart as cart_router, host
 from app.models import caravan, user, cart # Import models
+from app.core.config import settings
 
 app = FastAPI()
+
+# Middlewares
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
 # Serve frontend files
 app.mount("/frontend", StaticFiles(directory="../frontend"), name="frontend")

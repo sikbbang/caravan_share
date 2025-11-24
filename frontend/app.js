@@ -1,11 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Handle token from Google OAuth redirect
+    if (window.location.hash.startsWith('#token=')) {
+        const token = window.location.hash.substring(7); // Remove '#token='
+        localStorage.setItem('accessToken', token);
+        window.location.hash = ''; // Clean up the URL
+    }
+
+    // --- Main Elements ---
     const appRoot = document.getElementById('app-root');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+
+    // --- Desktop Nav Elements ---
     const authSection = document.getElementById('auth-section');
     const userSection = document.getElementById('user-section');
     const logoutBtn = document.getElementById('logout-btn');
     const userNameSpan = document.getElementById('user-name');
-    const modalOverlay = document.getElementById('modal-overlay');
-    const modalContent = document.getElementById('modal-content');
+
+    // --- Sidenav Elements ---
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sidenav = document.getElementById('sidenav');
+    const overlay = document.getElementById('overlay');
+    const sidenavCloseBtn = document.getElementById('sidenav-close-btn');
+    const sidenavAuthSection = document.getElementById('sidenav-auth-section');
+    const sidenavUserSection = document.getElementById('sidenav-user-section');
+    const sidenavUserNameSpan = document.getElementById('sidenav-user-name');
+    const mobileNav = document.getElementById('mobile-nav');
 
     let currentUserRole = null;
 
@@ -17,6 +37,34 @@ document.addEventListener('DOMContentLoaded', () => {
         '/seller': 'seller-page',
     };
 
+    // --- Sidenav Logic ---
+    function openSidenav() {
+        sidenav.classList.add('open');
+        overlay.classList.add('visible');
+    }
+
+    function closeSidenav() {
+        sidenav.classList.remove('open');
+        overlay.classList.remove('visible');
+    }
+
+    hamburgerBtn.addEventListener('click', openSidenav);
+    overlay.addEventListener('click', closeSidenav);
+    sidenavCloseBtn.addEventListener('click', closeSidenav);
+    mobileNav.addEventListener('click', (e) => {
+        if (e.target.classList.contains('nav-link')) {
+            // The router will handle the hash change
+            closeSidenav();
+        }
+        if (e.target.matches('#sidenav-logout-btn')) {
+            localStorage.removeItem('accessToken');
+            checkAuth();
+            closeSidenav();
+            window.location.hash = '#/';
+        }
+    });
+
+    // --- Auth and UI Update Logic ---
     function parseJwt(token) {
         try {
             const base64Url = token.split('.')[1];
@@ -34,43 +82,56 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkAuth() {
         const token = localStorage.getItem('accessToken');
         
-        const existingLink = userSection.querySelector('.dynamic-nav-link');
-        if (existingLink) {
-            existingLink.remove();
-        }
+        // Clear previous dynamic buttons from desktop nav to prevent duplication
+        document.querySelectorAll('#user-section .dynamic-nav-link').forEach(link => link.remove());
 
         if (token) {
             const payload = parseJwt(token);
             if (payload && payload.name) {
-                currentUserRole = payload.role; // Set user role
+                currentUserRole = payload.role;
+                // Show user sections, hide auth sections
                 authSection.style.display = 'none';
+                sidenavAuthSection.style.display = 'none';
                 userSection.style.display = 'flex';
-                userNameSpan.textContent = `${payload.name}님, 환영합니다!`;
+                sidenavUserSection.style.display = 'flex';
                 
-                const newButton = document.createElement('button');
-                newButton.className = 'nav-button dynamic-nav-link';
+                // Update user names
+                userNameSpan.textContent = `${payload.name}님, 환영합니다!`;
+                sidenavUserNameSpan.textContent = `${payload.name}님, 환영합니다!`;
 
-                if (payload.role === 'guest') {
-                    newButton.textContent = '장바구니';
-                    newButton.dataset.path = '#/cart';
-                } else if (payload.role === 'host') {
-                    newButton.textContent = '판매자 페이지';
-                    newButton.dataset.path = '#/seller';
-                }
-                userSection.insertBefore(newButton, logoutBtn);
+                // Create and insert dynamic buttons for desktop view
+                const cartButton = document.createElement('button');
+                cartButton.className = 'nav-button dynamic-nav-link';
+                cartButton.textContent = '장바구니';
+                cartButton.dataset.path = '#/cart';
+                userSection.insertBefore(cartButton, logoutBtn);
+
+                const sellerButton = document.createElement('button');
+                sellerButton.className = 'nav-button dynamic-nav-link';
+                sellerButton.textContent = '판매자 페이지';
+                sellerButton.dataset.path = '#/seller';
+                userSection.insertBefore(sellerButton, logoutBtn);
 
             } else {
-                currentUserRole = null; // Clear user role
+                // Invalid token
+                currentUserRole = null;
                 localStorage.removeItem('accessToken');
                 authSection.style.display = 'flex';
+                sidenavAuthSection.style.display = 'flex';
                 userSection.style.display = 'none';
+                sidenavUserSection.style.display = 'none';
             }
         } else {
-            currentUserRole = null; // Clear user role
+            // No token
+            currentUserRole = null;
             authSection.style.display = 'flex';
+            sidenavAuthSection.style.display = 'flex';
             userSection.style.display = 'none';
+            sidenavUserSection.style.display = 'none';
         }
     }
+
+    // --- Page Rendering Functions ---
 
     async function showCaravanDetailModal(caravanId, showAddToCartButton = true) {
         modalContent.innerHTML = '<p>Loading...</p>';
@@ -81,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const caravan = await response.json();
 
-            const addToCartBtnHtml = showAddToCartButton && currentUserRole === 'guest'
+            const addToCartBtnHtml = showAddToCartButton && currentUserRole !== 'host'
                 ? `<button id="add-to-cart-btn" data-id="${caravan.id}">장바구니에 담기</button>`
                 : '';
 
@@ -107,11 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const response = await fetch('/api/v1/caravans');
-            if (!response.ok) {
-                const errorBody = await response.text();
-                console.error('Error fetching caravans:', response.status, errorBody);
-                throw new Error('Network response was not ok');
-            }
+            if (!response.ok) throw new Error('Network response was not ok');
             
             const caravans = await response.json();
             caravanListContainer.innerHTML = '';
@@ -153,12 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/v1/cart', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (!response.ok) {
-                const errorBody = await response.text();
-                console.error('Error fetching cart:', response.status, errorBody);
-                throw new Error('Failed to fetch cart items.');
-            }
-
+            if (!response.ok) throw new Error('Failed to fetch cart items.');
+            
             const items = await response.json();
             const cartSummary = document.getElementById('cart-summary');
 
@@ -253,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <input type="hidden" name="location">
                     <div class="input-with-unit">
-                        <input style="font-size: 1rem;height: 40px;" type="number" name="price" placeholder="가격" required>
+                        <input type="number" name="price" placeholder="가격" required>
                         <span>원</span>
                     </div>
                     <button type="submit">등록하기</button>
@@ -398,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const name = e.target.name.value;
                 const email = e.target.email.value;
                 const password = e.target.password.value;
-                const role = e.target['user-type'].value;
+                const role = 'guest'; // Always register as guest
 
                 try {
                     const response = await fetch('/api/v1/users/signup', {
@@ -452,9 +505,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.body.addEventListener('click', async (e) => {
         if (e.target.matches('#home-link')) { e.preventDefault(); window.location.hash = '#/'; }
+        
+        // Desktop nav buttons
         if (e.target.matches('#login-btn')) { e.preventDefault(); window.location.hash = '#/login'; }
         if (e.target.matches('#register-btn')) { e.preventDefault(); window.location.hash = '#/register'; }
-        
         if (e.target.matches('#cart-btn')) { 
             e.preventDefault();
             const token = localStorage.getItem('accessToken');
@@ -465,6 +519,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.hash = '#/cart';
             }
         }
+        if (e.target.matches('#logout-btn')) {
+            localStorage.removeItem('accessToken');
+            checkAuth();
+            window.location.hash = '#/';
+        }
+
+        // Google login
+        if (e.target.matches('.google-btn')) {
+            window.location.href = '/api/v1/users/google/login';
+        }
 
         if (e.target.matches('.dynamic-nav-link')) {
             const path = e.target.dataset.path;
@@ -473,16 +537,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (e.target.matches('#logout-btn')) {
-            localStorage.removeItem('accessToken');
-            checkAuth();
-            window.location.hash = '#/';
-        }
-
+        // Modal
         if (e.target.matches('.modal-close-btn') || e.target === modalOverlay) {
             modalOverlay.classList.add('hidden');
         }
 
+        // Caravan item click
         const caravanItem = e.target.closest('.caravan-item');
         if (caravanItem) {
             const caravanId = caravanItem.dataset.id;
@@ -491,6 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Cart item click
         const cartItem = e.target.closest('.cart-item');
         if (cartItem && !e.target.matches('.remove-from-cart-btn, .cart-item-checkbox')) {
             const caravanId = cartItem.dataset.caravanId;
@@ -499,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Add to cart button in modal
         if (e.target.matches('#add-to-cart-btn')) {
             const caravanId = e.target.dataset.id;
             const token = localStorage.getItem('accessToken');
@@ -525,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Remove from cart button
         if (e.target.matches('.remove-from-cart-btn')) {
             if (confirm('정말로 삭제하시겠습니까?')) {
                 const cartItemDiv = e.target.closest('.cart-item');
@@ -544,16 +607,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Purchase button
         if (e.target.matches('#purchase-btn')) {
             const checkedItems = document.querySelectorAll('.cart-item-checkbox:checked');
             if (checkedItems.length === 0) {
                 alert('구매할 상품을 선택해주세요.');
                 return;
             }
-            // In a real application, you would proceed to a payment gateway
             alert(`${checkedItems.length}개의 상품을 구매합니다.`);
         }
 
+        // Show add caravan form button
         if (e.target.matches('#show-add-form-btn')) {
             const formContainer = document.getElementById('add-caravan-container');
             if (formContainer) {
