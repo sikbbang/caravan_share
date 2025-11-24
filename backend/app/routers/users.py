@@ -79,18 +79,17 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         new_user_data = user_schema.UserCreate(
             email=email,
             name=user_info.get('name', 'New User'),
-            password=security.get_password_hash(email), # Create a dummy password
+            password=email, # Use email as dummy password, will be hashed internally
             role=UserRole.guest 
         )
-        user = await user_crud.create_user(db, user=new_user_data, hashed_password=new_user_data.password)
+        user = await user_crud.create_user(db, user=new_user_data)
 
-    # Create an access token for our app
+    # Create an access token for our app (moved outside the if block)
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = security.create_access_token(
         data={"sub": user.email, "name": user.name, "role": user.role.value},
         expires_delta=access_token_expires,
     )
-
     # Redirect to the frontend with the token in the hash
     response = RedirectResponse(url="/")
     response.set_cookie(
