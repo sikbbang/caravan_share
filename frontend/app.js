@@ -148,12 +148,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             modalContent.innerHTML = `
                 <button class="modal-close-btn">&times;</button>
-                <img src="${caravan.image}" alt="${caravan.name}">
-                <h2>${caravan.name}</h2>
-                <p>${caravan.description || '상세 설명이 없습니다.'}</p>
-                <p><strong>위치:</strong> ${caravan.location}</p>
-                <p><strong>가격:</strong> ₩${caravan.price.toLocaleString()} / 박</p>
-                ${addToCartBtnHtml}
+                <div class="modal-body">
+                    <div class="modal-image-container">
+                        <img src="${caravan.image}" alt="${caravan.name}">
+                    </div>
+                    <div class="modal-info-container">
+                        <h2>${caravan.name}</h2>
+                        <p>${caravan.description || '상세 설명이 없습니다.'}</p>
+                        <p><strong>위치:</strong> ${caravan.location}</p>
+                        <p><strong>가격:</strong> ₩${caravan.price.toLocaleString()} / 박</p>
+                        ${addToCartBtnHtml}
+                    </div>
+                </div>
             `;
         } catch (error) {
             console.error('Error showing modal:', error);
@@ -210,6 +216,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/v1/cart', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+            if (response.status === 401) {
+                // Token is invalid or expired
+                localStorage.removeItem('accessToken');
+                checkAuth(); // Update UI
+                alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                window.location.hash = '#/login';
+                return;
+            }
             if (!response.ok) throw new Error('Failed to fetch cart items.');
             
             const items = await response.json();

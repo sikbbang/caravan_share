@@ -49,5 +49,5 @@ async def read_root():
 # Include your routers here
 app.include_router(caravans.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1/users")
-app.include_router(cart_router.router, prefix="/api/v1/cart")
+app.include_router(cart_router.router, prefix="/api/v1")
 app.include_router(host.router, prefix="/api/v1/host")
