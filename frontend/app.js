@@ -145,6 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const addToCartBtnHtml = showAddToCartButton && currentUserRole !== 'host'
                 ? `<button id="add-to-cart-btn" data-id="${caravan.id}">장바구니에 담기</button>`
                 : '';
+            
+            const hostInfoHtml = caravan.host
+                ? `<p><strong>호스트:</strong> ${caravan.host.name}</p>`
+                : '';
 
             modalContent.innerHTML = `
                 <button class="modal-close-btn">&times;</button>
@@ -157,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>${caravan.description || '상세 설명이 없습니다.'}</p>
                         <p><strong>위치:</strong> ${caravan.location}</p>
                         <p><strong>가격:</strong> ₩${caravan.price.toLocaleString()} / 박</p>
+                        ${hostInfoHtml}
                         ${addToCartBtnHtml}
                     </div>
                 </div>

@@ -1,14 +1,24 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from app.models.caravan import Caravan
 from app.schemas.caravan import CaravanCreate
 
 async def get_caravan_by_id(db: AsyncSession, caravan_id: int):
-    result = await db.execute(select(Caravan).filter(Caravan.id == caravan_id))
+    result = await db.execute(
+        select(Caravan)
+        .options(selectinload(Caravan.host))
+        .filter(Caravan.id == caravan_id)
+    )
     return result.scalars().first()
 
 async def get_caravans(db: AsyncSession, skip: int = 0, limit: int = 100):
-    result = await db.execute(select(Caravan).offset(skip).limit(limit))
+    result = await db.execute(
+        select(Caravan)
+        .options(selectinload(Caravan.host))
+        .offset(skip)
+        .limit(limit)
+    )
     return result.scalars().all()
 
 async def get_caravans_by_host(db: AsyncSession, host_id: int):

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Union
+from .user import UserInDB
 
 class CaravanBase(BaseModel):
     name: str
@@ -14,6 +15,7 @@ class CaravanCreate(CaravanBase):
 class Caravan(CaravanBase):
     id: int
     host_id: Union[int, None] = None
+    host: Union[UserInDB, None] = None
 
     class Config:
         from_attributes = True
