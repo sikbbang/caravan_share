@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileNav = document.getElementById('mobile-nav');
 
     let currentUserRole = null;
+    let currentUserId = null;
+    let caravans = [];
 
     const routes = {
         '/': 'home-page',
@@ -89,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = parseJwt(token);
             if (payload && payload.name) {
                 currentUserRole = payload.role;
+                currentUserId = payload.sub; // Assuming 'sub' is the user ID
                 // Show user sections, hide auth sections
                 authSection.style.display = 'none';
                 sidenavAuthSection.style.display = 'none';
@@ -115,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Invalid token
                 currentUserRole = null;
+                currentUserId = null;
                 localStorage.removeItem('accessToken');
                 authSection.style.display = 'flex';
                 sidenavAuthSection.style.display = 'flex';
@@ -124,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // No token
             currentUserRole = null;
+            currentUserId = null;
             authSection.style.display = 'flex';
             sidenavAuthSection.style.display = 'flex';
             userSection.style.display = 'none';
@@ -133,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Page Rendering Functions ---
 
-    async function showCaravanDetailModal(caravanId, showAddToCartButton = true) {
+    async function showCaravanDetailModal(caravanId, isInCart, showAddToCartButton = true) {
         modalContent.innerHTML = '<p>Loading...</p>';
         modalOverlay.classList.remove('hidden');
         try {
@@ -142,9 +147,23 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const caravan = await response.json();
 
-            const addToCartBtnHtml = showAddToCartButton && currentUserRole !== 'host'
-                ? `<button id="add-to-cart-btn" data-id="${caravan.id}">장바구니에 담기</button>`
-                : '';
+            // Determine Add to Cart button state
+            let addToCartBtnHtml = '';
+            if (showAddToCartButton) {
+                const isOwnCaravan = caravan.host && caravan.host.email === currentUserId;
+                let buttonText = '장바구니에 담기';
+                let disabled = false;
+
+                if (isOwnCaravan) {
+                    buttonText = '자신의 카라반은 담을 수 없습니다';
+                    disabled = true;
+                } else if (isInCart) {
+                    buttonText = '이미 장바구니에 있습니다';
+                    disabled = true;
+                }
+                
+                addToCartBtnHtml = `<button id="add-to-cart-btn" data-id="${caravan.id}" ${disabled ? 'disabled' : ''}>${buttonText}</button>`;
+            }
             
             const hostInfoHtml = caravan.host
                 ? `<p><strong>호스트:</strong> ${caravan.host.name}</p>`
@@ -178,10 +197,16 @@ document.addEventListener('DOMContentLoaded', () => {
         caravanListContainer.innerHTML = '<p>Loading caravans...</p>';
 
         try {
-            const response = await fetch('/api/v1/caravans');
+            const token = localStorage.getItem('accessToken');
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            const response = await fetch('/api/v1/caravans', { headers });
+
             if (!response.ok) throw new Error('Network response was not ok');
             
-            const caravans = await response.json();
+            caravans = await response.json(); // Store in global variable
             caravanListContainer.innerHTML = '';
             caravans.forEach(caravan => {
                 const caravanItem = document.createElement('div');
@@ -564,9 +589,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Caravan item click
         const caravanItem = e.target.closest('.caravan-item');
         if (caravanItem) {
-            const caravanId = caravanItem.dataset.id;
-            if (caravanId) {
-                showCaravanDetailModal(caravanId);
+            const caravanId = parseInt(caravanItem.dataset.id, 10);
+            const caravan = caravans.find(c => c.id === caravanId);
+            if (caravan) {
+                showCaravanDetailModal(caravan.id, caravan.is_in_cart);
             }
         }
 
@@ -575,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cartItem && !e.target.matches('.remove-from-cart-btn, .cart-item-checkbox')) {
             const caravanId = cartItem.dataset.caravanId;
             if (caravanId) {
-                showCaravanDetailModal(caravanId, false);
+                showCaravanDetailModal(caravanId, true, false); // Already in cart, so pass true
             }
         }
 
@@ -600,6 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error('Failed to add to cart.');
                 alert('장바구니에 추가되었습니다.');
                 modalOverlay.classList.add('hidden');
+                renderCaravanList(); // Refresh the list to update the button state
             } catch (error) {
                 console.error('Add to cart error:', error);
                 alert(error.message);
@@ -623,25 +650,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Remove from cart error:', error);
                     alert(error.message);
                 }
-            }
-        }
-
-        // Purchase button
-        if (e.target.matches('#purchase-btn')) {
-            const checkedItems = document.querySelectorAll('.cart-item-checkbox:checked');
-            if (checkedItems.length === 0) {
-                alert('구매할 상품을 선택해주세요.');
-                return;
-            }
-            alert(`${checkedItems.length}개의 상품을 구매합니다.`);
-        }
-
-        // Show add caravan form button
-        if (e.target.matches('#show-add-form-btn')) {
-            const formContainer = document.getElementById('add-caravan-container');
-            if (formContainer) {
-                const isVisible = formContainer.style.display === 'block';
-                formContainer.style.display = isVisible ? 'none' : 'block';
             }
         }
     });

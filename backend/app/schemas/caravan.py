@@ -16,6 +16,7 @@ class Caravan(CaravanBase):
     id: int
     host_id: Union[int, None] = None
     host: Union[UserInDB, None] = None
+    is_in_cart: bool = False
 
     class Config:
         from_attributes = True

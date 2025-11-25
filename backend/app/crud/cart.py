@@ -2,13 +2,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from app.models.cart import CartItem
+from app.models.caravan import Caravan
 from app.schemas.cart import CartItemCreate
 
 async def get_cart_items_by_user(db: AsyncSession, user_id: int):
     result = await db.execute(
         select(CartItem)
         .filter(CartItem.user_id == user_id)
-        .options(selectinload(CartItem.caravan))
+        .options(selectinload(CartItem.caravan).selectinload(Caravan.host))
     )
     return result.scalars().all()
 
