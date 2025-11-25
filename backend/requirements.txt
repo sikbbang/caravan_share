@@ -1,2 +1,7 @@
-
 itsdangerous
+authlib
+httpx
+email-validator
+python-multipart
+passlib==1.7.4
+bcrypt==3.2.2

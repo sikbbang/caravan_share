@@ -34,8 +34,7 @@ async def signup(user: user_schema.UserCreate, db: AsyncSession = Depends(get_db
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered",
         )
-    hashed_password = security.get_password_hash(user.password)
-    db_user = await user_crud.create_user(db=db, user=user, hashed_password=hashed_password)
+    db_user = await user_crud.create_user(db=db, user=user)
     return db_user
 
 @router.post("/login", response_model=user_schema.Token)
