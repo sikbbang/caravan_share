@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('accessToken');
             checkAuth();
             closeSidenav();
-            window.location.hash = '#/';
+            window.location.reload();
         }
     });
 
@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.matches('#logout-btn')) {
             localStorage.removeItem('accessToken');
             checkAuth();
-            window.location.hash = '#/';
+            window.location.reload();
         }
 
         // Google login
@@ -621,6 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const caravanId = e.target.dataset.id;
             const token = localStorage.getItem('accessToken');
             if (!token) {
+                modalOverlay.classList.add('hidden');
                 alert('로그인이 필요합니다.');
                 window.location.hash = '#/login';
                 return;
