@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 import shutil
 import uuid
+import os
 
 from app.db.database import get_db
 from app.core.auth import get_current_user
@@ -22,10 +23,14 @@ async def create_caravan_for_host(
     price: float = Form(...),
     image: UploadFile = File(...)
 ):
+    # Ensure the upload directory exists
+    images_dir = "static/images"
+    os.makedirs(images_dir, exist_ok=True)
+
     # Generate a unique filename
     file_extension = image.filename.split(".")[-1]
     unique_filename = f"{uuid.uuid4()}.{file_extension}"
-    file_path = f"static/images/{unique_filename}"
+    file_path = os.path.join(images_dir, unique_filename)
     
     # Save the file
     with open(file_path, "wb") as buffer:

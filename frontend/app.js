@@ -153,16 +153,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isOwnCaravan = caravan.host && caravan.host.email === currentUserId;
                 let buttonText = '장바구니에 담기';
                 let disabled = false;
+                let bgColor = "var(--primary-color)";
 
                 if (isOwnCaravan) {
                     buttonText = '자신의 카라반은 담을 수 없습니다';
                     disabled = true;
+                    bgColor = "#999";
                 } else if (isInCart) {
                     buttonText = '이미 장바구니에 있습니다';
                     disabled = true;
+                    bgColor = "#999";
                 }
                 
-                addToCartBtnHtml = `<button id="add-to-cart-btn" data-id="${caravan.id}" ${disabled ? 'disabled' : ''}>${buttonText}</button>`;
+                addToCartBtnHtml = `<button id="add-to-cart-btn" style="background-color:${bgColor};" data-id="${caravan.id}" ${disabled ? 'disabled' : ''}>${buttonText}</button>`;
             }
             
             const hostInfoHtml = caravan.host
@@ -440,6 +443,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         sellerContent.addEventListener('click', async (e) => {
+            if (e.target.matches('#show-add-form-btn')) {
+                const formContainer = document.getElementById('add-caravan-container');
+                if (formContainer) {
+                    const isVisible = formContainer.style.display === 'block';
+                    formContainer.style.display = isVisible ? 'none' : 'block';
+                }
+            }
+
             if (e.target.matches('.remove-hosted-caravan-btn')) {
                 const caravanId = e.target.dataset.id;
                 if (confirm('정말로 이 카라반을 삭제하시겠습니까?')) {

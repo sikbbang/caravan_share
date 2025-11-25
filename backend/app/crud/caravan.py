@@ -45,7 +45,7 @@ async def create_caravan(db: AsyncSession, caravan: CaravanCreate, host_id: int)
     db.add(db_caravan)
     await db.commit()
     await db.refresh(db_caravan)
-    return db_caravan
+    return await get_caravan_by_id(db, caravan_id=db_caravan.id)
 
 async def create_initial_caravans(db: AsyncSession):
     pass
