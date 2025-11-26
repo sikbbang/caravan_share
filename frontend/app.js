@@ -59,10 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
             closeSidenav();
         }
         if (e.target.matches('#sidenav-logout-btn')) {
-            localStorage.removeItem('accessToken');
-            checkAuth();
-            closeSidenav();
-            window.location.reload();
+            try {
+                // Ensure the server-side session is cleared
+                fetch('/api/v1/users/logout', { method: 'POST', keepalive: true });
+            } finally {
+                localStorage.removeItem('accessToken');
+                checkAuth();
+                closeSidenav();
+                window.location.reload();
+            }
         }
     });
 
@@ -575,9 +580,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (e.target.matches('#logout-btn')) {
-            localStorage.removeItem('accessToken');
-            checkAuth();
-            window.location.reload();
+            try {
+                // Ensure the server-side session is cleared
+                fetch('/api/v1/users/logout', { method: 'POST', keepalive: true });
+            } finally {
+                localStorage.removeItem('accessToken');
+                checkAuth();
+                window.location.reload();
+            }
         }
 
         // Google login

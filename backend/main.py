@@ -25,15 +25,9 @@ if not os.path.exists("static"):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # CORS (Cross-Origin Resource Sharing)
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://127.0.0.1:5500",  # For Live Server in VSCode
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

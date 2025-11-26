@@ -101,3 +101,8 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     # Also pass it in the hash for the JS to read and store
     response.headers["Location"] = f"/#token={access_token}"
     return response
+
+@router.post("/logout")
+async def logout(request: Request):
+    request.session.clear()
+    return {"message": "Successfully logged out"}
