@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Google login
         if (e.target.matches('.google-btn')) {
-            window.location.reload();
+            window.location.reload(true);
             window.location.href = '/api/v1/users/google/login';
         }
 
