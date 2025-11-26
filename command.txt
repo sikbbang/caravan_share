@@ -1,0 +1,8 @@
+# 8080포트 가져오기
+netstat -tnlp | grep 8080
+
+# 프로세스 종료
+kill -9 [PID]
+
+# 백그라운드 앱실행
+nohup python3 start.py &
