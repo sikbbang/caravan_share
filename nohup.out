@@ -1,0 +1,206 @@
+INFO:     Will watch for changes in these directories: ['/home/ubuntu/caravan_share/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+INFO:     Started reloader process [6526] using StatReload
+Added to sys.path: /home/ubuntu/caravan_share/backend
+Changed working directory to: /home/ubuntu/caravan_share/backend
+Starting Uvicorn server, loading app from 'main:app'
+INFO:     Started server process [6529]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     125.182.57.53:6802 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:6802 - "GET /frontend/style.css HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:6803 - "GET /frontend/app.js HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:6804 - "GET /api/v1/users/google/login HTTP/1.1" 302 Found
+INFO:     125.182.57.53:6804 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:6828 - "GET /api/v1/users/google/login HTTP/1.1" 302 Found
+INFO:     125.182.57.53:6837 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:7939 - "GET /api/v1/caravans/1 HTTP/1.1" 200 OK
+INFO:     125.182.57.53:7939 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:7939 - "GET /frontend/style.css HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:7940 - "GET /frontend/app.js HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:7940 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:7973 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8059 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8059 - "GET /frontend/style.css HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:8060 - "GET /frontend/app.js HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:8060 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8252 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8252 - "GET /frontend/style.css HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:8252 - "GET /frontend/app.js HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:8252 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8279 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8279 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8279 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8279 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8297 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8297 - "GET /frontend/style.css HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:8298 - "GET /frontend/app.js HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:8298 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8298 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8298 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8313 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8313 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8326 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8326 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8336 - "GET /api/v1/caravans/1 HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.182.57.53:8349 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8349 - "GET /frontend/style.css HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8349 - "GET /frontend/app.js HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8349 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     Will watch for changes in these directories: ['/home/ubuntu/caravan_share/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+INFO:     Started reloader process [7846] using StatReload
+Added to sys.path: /home/ubuntu/caravan_share/backend
+Changed working directory to: /home/ubuntu/caravan_share/backend
+Starting Uvicorn server, loading app from 'main:app'
+INFO:     Started server process [7849]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     125.182.57.53:8426 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8427 - "GET /frontend/app.js HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8426 - "GET /frontend/style.css HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8426 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     125.182.57.53:8427 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8427 - "GET /api/v1/caravans/3 HTTP/1.1" 200 OK
+INFO:     74.125.77.28:43987 - "GET /api/v1/users/google/callback HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/uvicorn/protocols/http/h11_impl.py", line 412, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/uvicorn/middleware/proxy_headers.py", line 84, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/fastapi/applications.py", line 1134, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/middleware/sessions.py", line 85, in __call__
+    await self.app(scope, receive, send_wrapper)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/fastapi/routing.py", line 125, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/fastapi/routing.py", line 111, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/fastapi/routing.py", line 391, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/fastapi/routing.py", line 290, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/caravan_share/backend/app/routers/users.py", line 62, in google_callback
+    token = await oauth.google.authorize_access_token(request)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/authlib/integrations/starlette_client/apps.py", line 90, in authorize_access_token
+    params = self._format_state_params(state_data, params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/authlib/integrations/base_client/sync_app.py", line 260, in _format_state_params
+    raise MismatchingStateError()
+authlib.integrations.base_client.errors.MismatchingStateError: mismatching_state: CSRF Warning! State not equal in request and response.
+INFO:     74.125.114.5:40208 - "GET /api/v1/users/google/login HTTP/1.1" 302 Found
+INFO:     74.125.77.22:58376 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     125.182.57.53:8438 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8438 - "GET /api/v1/users/google/login HTTP/1.1" 302 Found
+INFO:     125.182.57.53:8440 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8440 - "GET /frontend/style.css HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8441 - "GET /frontend/app.js HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8441 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8441 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8441 - "GET /api/v1/users/google/login HTTP/1.1" 302 Found
+INFO:     125.182.57.53:8441 - "GET /api/v1/users/google/callback?state=zYvrc5n3CpXWdxi7Y1FJsWjUjy2V8d&code=4%2F0Ab32j90SE69TXG50_MO65f817k7h_ZKfkq9c9k64SD2mxNiZ4otJbRYmp5_DCOCy3bb2aQ&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none HTTP/1.1" 307 Temporary Redirect
+INFO:     125.182.57.53:8441 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8440 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     35.237.4.214:38638 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8833 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     125.182.57.53:8832 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8837 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8837 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:8844 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     125.182.57.53:8845 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53076 - "GET / HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53076 - "GET /frontend/style.css HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53077 - "GET /frontend/app.js HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53086 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53087 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     125.182.57.53:9310 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53095 - "GET /api/v1/caravans/1 HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9310 - "GET /api/v1/cart HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9310 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9310 - "GET /api/v1/host/caravans HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53095 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53095 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53095 - "GET /api/v1/caravans/3 HTTP/1.1" 200 OK
+INFO:     118.128.46.15:53095 - "GET /api/v1/caravans/2 HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "POST /api/v1/host/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET /api/v1/host/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET /static/images/c4dd8c1f-5fd7-46aa-bf36-e424bebd66ba.png HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET /api/v1/caravans/4 HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET /api/v1/host/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "DELETE /api/v1/host/caravans/4 HTTP/1.1" 204 No Content
+INFO:     125.182.57.53:9319 - "GET /api/v1/host/caravans HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET / HTTP/1.1" 200 OK
+INFO:     125.182.57.53:9319 - "GET /frontend/style.css HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:9331 - "GET /frontend/app.js HTTP/1.1" 304 Not Modified
+INFO:     125.182.57.53:9331 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     115.136.112.126:61689 - "GET / HTTP/1.1" 200 OK
+INFO:     115.136.112.126:61689 - "GET /frontend/style.css HTTP/1.1" 200 OK
+INFO:     115.136.112.126:61690 - "GET /frontend/app.js HTTP/1.1" 200 OK
+INFO:     115.136.112.126:61689 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+INFO:     221.207.35.68:50378 - "GET / HTTP/1.1" 200 OK
+INFO:     123.138.72.206:14979 - "GET / HTTP/1.1" 200 OK
+INFO:     221.198.80.191:31163 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     45.156.129.132:47759 - "GET / HTTP/1.1" 200 OK
+INFO:     128.199.44.215:44918 - "GET / HTTP/1.1" 200 OK
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+WARNING:  Invalid HTTP request received.
+INFO:     185.247.137.100:57019 - "GET / HTTP/1.1" 200 OK
+INFO:     210.112.150.36:11925 - "GET / HTTP/1.1" 200 OK
+INFO:     210.112.150.36:11925 - "GET /frontend/style.css HTTP/1.1" 200 OK
+INFO:     210.112.150.36:11977 - "GET /frontend/app.js HTTP/1.1" 200 OK
+INFO:     210.112.150.36:11977 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     210.112.150.36:11925 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     210.112.150.36:17759 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     210.112.150.36:34742 - "POST /api/v1/users/login HTTP/1.1" 401 Unauthorized
+INFO:     210.112.150.36:40270 - "POST /api/v1/users/login HTTP/1.1" 200 OK
+INFO:     210.112.150.36:40270 - "GET /api/v1/caravans HTTP/1.1" 200 OK
+INFO:     210.112.150.36:40270 - "GET /api/v1/caravans/1 HTTP/1.1" 200 OK
